@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTT Timestamp Generator</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #0078D4, #00A4EF);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 800px;
+            max-width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: fit-content;
+            margin: 0 auto 25px auto;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        label {
+            display: block;
+            color: white;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            border: none;
+            border-radius: 14px;
+            padding: 18px;
+            font-size: 22px;
+            font-weight: 600;
+            resize: none;
+            outline: none;
+            color: #333;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 120, 212, 0.25);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #0078D4, #005A9E);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #28A745, #1E7E34);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .footer {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        @media(max-width:768px) {
+            textarea {
+                font-size: 18px;
+            }
+
+            button {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🕒 NTT Timestamp Generator</h1>
+
+        <div class="badge">
+            🌍 SOUTH AFRICA STANDARD TIME (SAST)
+        </div>
+
+        <label>Engineer Name</label>
+
+        <input
+            type="text"
+            id="name"
+            value="Mohith Vema(NTT MNS)"
+            placeholder="Enter Engineer Name">
+
+        <textarea id="output" readonly></textarea>
+
+        <div class="buttons">
+
+            <button class="generate-btn" onclick="generateTimestamp()">
+                🔄 Generate Timestamp
+            </button>
+
+            <button class="copy-btn" onclick="generateAndCopy()">
+                📋 Generate & Copy
+            </button>
+
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <div class="footer">
+            Develped By Mohith Vema(NTT MNS)
+        </div>
+
+    </div>
+
+    <script>
+
+        function generateTimestamp() {
+
+            const now = new Date();
+
+            const datePart = now.toLocaleDateString("en-GB", {
+                timeZone: "Africa/Johannesburg",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+
+            const timePart = now.toLocaleTimeString("en-US", {
+                timeZone: "Africa/Johannesburg",
+                hour: "numeric",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            });
+
+            let name = document.getElementById("name").value.trim();
+
+            if (name === "") {
+                name = "Mohith Vema(NTT MNS)";
+            }
+
+            const timestamp =
+                `${datePart} ${timePart} SAST ${name}`;
+
+            document.getElementById("output").value = timestamp;
+
+            return timestamp;
+        }
+
+        async function generateAndCopy() {
+
+            const text = generateTimestamp();
+
+            try {
+
+                await navigator.clipboard.writeText(text);
+
+                document.getElementById("status").innerHTML =
+                    "✅ Timestamp generated and copied successfully!";
+
+            } catch (err) {
+
+                const output = document.getElementById("output");
+
+                output.select();
+
+                document.execCommand("copy");
+
+                document.getElementById("status").innerHTML =
+                    "✅ Timestamp copied successfully!";
+            }
+        }
+
+        document
+            .getElementById("name")
+            .addEventListener("input", generateTimestamp);
+
+        generateTimestamp();
+
+        setInterval(generateTimestamp, 1000);
+
+    </script>
+
+</body>
+
+</html>
